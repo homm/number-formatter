@@ -48,117 +48,132 @@ test("Format 1020054732", function() {
 });
 
 
-module("Not si values");
-
-test("2 signs, ", function() {
-	var size = numberFormatter({signs: 2, binary: true});
-
-	equal(size(999), '999');
-	equal(size(1000), '1 k');
-	equal(size(Math.floor(9.95 * 1024)), '9.9 k');
-	equal(size(Math.ceil(9.95 * 1024)), '10 k');
-	equal(size(99.5 * 1024 - 1), '99 k');
-	equal(size(99.5 * 1024), '100 k');
-	equal(size(999.5 * 1024 - 1), '999 k');
-	equal(size(999.5 * 1024), '1 M');
-
-	equal(size(Math.floor(0.95 * 1024)), '972');
-	equal(size(Math.ceil(0.95 * 1024)), '973');
-	equal(size(Math.floor(1.05 * 1024)), '1 k');
-	equal(size(Math.ceil(1.05 * 1024)), '1.1 k');
-
-	equal(size(Math.floor(0.95 * 1024 * 1024)), '973 k');
-	equal(size(Math.ceil(0.95 * 1024 * 1024)), '973 k');
-	equal(size(Math.floor(1.05 * 1024 * 1024)), '1 M');
-	equal(size(Math.ceil(1.05 * 1024 * 1024)), '1.1 M');
-
-	equal(size(Math.floor(0.95 * 1024 * 1024 * 1024)), '973 M');
-	equal(size(Math.ceil(0.95 * 1024 * 1024 * 1024)), '973 M');
-	equal(size(Math.floor(1.05 * 1024 * 1024 * 1024)), '1 G');
-	equal(size(Math.ceil(1.05 * 1024 * 1024 * 1024)), '1.1 G');
-
-});
+module("Binary digits");
 
 test("3 signs", function() {
 	var size = numberFormatter({signs: 3, binary: true});
 
-	equal(size(999), '999');
+	// 999 -> 0.9765625 overflow
+	equal(size(1000 - 1), '999');
 	equal(size(1000), '0.98 k');
-	equal(size(Math.floor(9.995 * 1024)), '9.99 k');
-	equal(size(Math.ceil(9.995 * 1024)), '10 k');
-	equal(size(Math.floor(99.95 * 1024)), '99.9 k');
-	equal(size(Math.ceil(99.95 * 1024)), '100 k');
-	equal(size(999.5 * 1024 - 1), '999 k');
-	equal(size(999.5 * 1024), '0.98 M');
-
+	// 0.99 -> 1.00 overflow
 	equal(size(Math.floor(0.995 * 1024)), '0.99 k');
 	equal(size(Math.ceil(0.995 * 1024)), '1 k');
+	// 1.00 -> 1.01 overflow
 	equal(size(Math.floor(1.005 * 1024)), '1 k');
 	equal(size(Math.ceil(1.005 * 1024)), '1.01 k');
 
+	// Same for kk
+	equal(size(999.5 * 1024 - 1), '999 k');
+	equal(size(999.5 * 1024), '0.98 M');
 	equal(size(Math.floor(0.995 * 1024 * 1024)), '0.99 M');
 	equal(size(Math.ceil(0.995 * 1024 * 1024)), '1 M');
 	equal(size(Math.floor(1.005 * 1024 * 1024)), '1 M');
 	equal(size(Math.ceil(1.005 * 1024 * 1024)), '1.01 M');
 
+	// Same for MM
+	equal(size(999.5 * 1024 * 1024 - 1), '999 M');
+	equal(size(999.5 * 1024 * 1024), '0.98 G');
 	equal(size(Math.floor(0.995 * 1024 * 1024 * 1024)), '0.99 G');
 	equal(size(Math.ceil(0.995 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.floor(1.005 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.ceil(1.005 * 1024 * 1024 * 1024)), '1.01 G');
+
+	// 9.99 -> 10.0 overflow
+	equal(size(Math.floor(9.995 * 1024)), '9.99 k');
+	equal(size(Math.ceil(9.995 * 1024)), '10 k');
+	// 99.9 -> 100 overflow
+	equal(size(Math.floor(99.95 * 1024)), '99.9 k');
+	equal(size(Math.ceil(99.95 * 1024)), '100 k');
 });
+
+test("2 signs, ", function() {
+	var size = numberFormatter({signs: 2, binary: true});
+
+	equal(size(1000 - 1), '999');
+	equal(size(1000), '1 k');
+	equal(size(Math.floor(0.95 * 1024)), '972');
+	equal(size(Math.ceil(0.95 * 1024)), '973');
+	equal(size(Math.floor(1.05 * 1024)), '1 k');
+	equal(size(Math.ceil(1.05 * 1024)), '1.1 k');
+
+	equal(size(999.5 * 1024 - 1), '999 k');
+	equal(size(999.5 * 1024), '1 M');
+	equal(size(Math.floor(0.95 * 1024 * 1024)), '973 k');
+	equal(size(Math.ceil(0.95 * 1024 * 1024)), '973 k');
+	equal(size(Math.floor(1.05 * 1024 * 1024)), '1 M');
+	equal(size(Math.ceil(1.05 * 1024 * 1024)), '1.1 M');
+
+	equal(size(999.5 * 1024 * 1024 - 1), '999 M');
+	equal(size(999.5 * 1024 * 1024), '1 G');
+	equal(size(Math.floor(0.95 * 1024 * 1024 * 1024)), '973 M');
+	equal(size(Math.ceil(0.95 * 1024 * 1024 * 1024)), '973 M');
+	equal(size(Math.floor(1.05 * 1024 * 1024 * 1024)), '1 G');
+	equal(size(Math.ceil(1.05 * 1024 * 1024 * 1024)), '1.1 G');
+
+	equal(size(Math.floor(9.95 * 1024)), '9.9 k');
+	equal(size(Math.ceil(9.95 * 1024)), '10 k');
+	equal(size(99.5 * 1024 - 1), '99 k');
+	equal(size(99.5 * 1024), '100 k');
+});
+
 
 test("4 signs", function() {
 	var size = numberFormatter({signs: 4, binary: true});
 
-	equal(size(999), '999');
+	equal(size(1000 - 1), '999');
 	equal(size(1000), '0.977 k');
-	equal(size(Math.floor(9.9995 * 1024)), '9.999 k');
-	equal(size(Math.ceil(9.9995 * 1024)), '10 k');
-	equal(size(Math.floor(99.995 * 1024)), '99.99 k');
-	equal(size(Math.ceil(99.995 * 1024)), '100 k');
-	equal(size(Math.floor(999.95 * 1024)), '999.9 k');
-	equal(size(Math.ceil(999.95 * 1024)), '0.977 M');
-
 	equal(size(Math.floor(0.9995 * 1024)), '0.999 k');
 	equal(size(Math.ceil(0.9995 * 1024)), '1 k');
 	equal(size(Math.floor(1.0005 * 1024)), '1 k');
 	equal(size(Math.ceil(1.0005 * 1024)), '1.001 k');
 
+	equal(size(Math.floor(999.95 * 1024)), '999.9 k');
+	equal(size(Math.ceil(999.95 * 1024)), '0.977 M');
 	equal(size(Math.floor(0.9995 * 1024 * 1024)), '0.999 M');
 	equal(size(Math.ceil(0.9995 * 1024 * 1024)), '1 M');
 	equal(size(Math.floor(1.0005 * 1024 * 1024)), '1 M');
 	equal(size(Math.ceil(1.0005 * 1024 * 1024)), '1.001 M');
 
+	equal(size(Math.floor(999.95 * 1024 * 1024)), '999.9 M');
+	equal(size(Math.ceil(999.95 * 1024 * 1024)), '0.977 G');
 	equal(size(Math.floor(0.9995 * 1024 * 1024 * 1024)), '0.999 G');
 	equal(size(Math.ceil(0.9995 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.floor(1.0005 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.ceil(1.0005 * 1024 * 1024 * 1024)), '1.001 G');
+
+	equal(size(Math.floor(9.9995 * 1024)), '9.999 k');
+	equal(size(Math.ceil(9.9995 * 1024)), '10 k');
+	equal(size(Math.floor(99.995 * 1024)), '99.99 k');
+	equal(size(Math.ceil(99.995 * 1024)), '100 k');
 });
 
 test("5 signs", function() {
 	var size = numberFormatter({signs: 5, binary: true});
 
-	equal(size(999), '999');
+	equal(size(1000 - 1), '999');
 	equal(size(1000), '0.9766 k');
-	equal(size(Math.floor(9.99995 * 1024)), '9.999 k');  // 9.9990234375
-	equal(size(Math.ceil(9.99995 * 1024)), '10 k');
-	equal(size(Math.floor(99.9995 * 1024)), '99.999 k');  // 99.999023438
-	equal(size(Math.ceil(99.9995 * 1024)), '100 k');
-	equal(size(Math.floor(999.995 * 1024)), '999.99 k');  // 999.99414063
-	equal(size(Math.ceil(999.995 * 1024)), '0.9766 M');
-
 	equal(size(Math.floor(0.99995 * 1024)), '0.999 k');
 	equal(size(Math.ceil(0.99995 * 1024)), '1 k');
 	equal(size(Math.floor(1.00005 * 1024)), '1 k');
 	equal(size(Math.ceil(1.00005 * 1024)), '1.001 k');
 
+	equal(size(Math.floor(999.995 * 1024)), '999.99 k');
+	equal(size(Math.ceil(999.995 * 1024)), '0.9766 M');
 	equal(size(Math.floor(0.99995 * 1024 * 1024)), '0.9999 M');
 	equal(size(Math.ceil(0.99995 * 1024 * 1024)), '1 M');
 	equal(size(Math.floor(1.00005 * 1024 * 1024)), '1 M');
 	equal(size(Math.ceil(1.00005 * 1024 * 1024)), '1.0001 M');
 
+	equal(size(Math.floor(999.995 * 1024 * 1024)), '999.99 M');
+	equal(size(Math.ceil(999.995 * 1024 * 1024)), '0.9766 G');
 	equal(size(Math.floor(0.99995 * 1024 * 1024 * 1024)), '0.9999 G');
 	equal(size(Math.ceil(0.99995 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.floor(1.00005 * 1024 * 1024 * 1024)), '1 G');
 	equal(size(Math.ceil(1.00005 * 1024 * 1024 * 1024)), '1.0001 G');
+
+	equal(size(Math.floor(9.99995 * 1024)), '9.999 k');  // 9.9990234375
+	equal(size(Math.ceil(9.99995 * 1024)), '10 k');
+	equal(size(Math.floor(99.9995 * 1024)), '99.999 k');  // 99.999023438
+	equal(size(Math.ceil(99.9995 * 1024)), '100 k');
 });
