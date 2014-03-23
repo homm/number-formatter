@@ -15,10 +15,11 @@ var numberFormatter = (function() {
 			}
 
 			var i = 0,
-				threshold = 1000 - 5 * Math.pow(10, 2 - Math.max(self.signs, 3));
+				threshold = 1000 - 5 * Math.pow(10, 2 - Math.max(self.signs, 3)),
+				divider = self.binary ? 1024 : 1000;
 			while (value >= threshold && i < self.units.length - 1) {
 				i++;
-				value /= 1024;
+				value /= divider;
 			}
 
 			// number of digits after point: total number minus digits before point
