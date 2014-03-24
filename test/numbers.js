@@ -208,8 +208,7 @@ test("3 signs", function() {
 
 	// 9.99 -> 10.0 overflow
 	equal(size(9995 - 1), '9.99 k');
-	equal(size(9995 + 1), '10 k');
-	// FIXME: equal(size(9995), '10 k');
+	equal(size(9995), '10 k');
 	// 99.9 -> 100 overflow
 	equal(size(99950 - 1), '99.9 k');
 	equal(size(99950), '100 k');

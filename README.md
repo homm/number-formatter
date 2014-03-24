@@ -15,8 +15,6 @@ How To Use
 "9313 TB"
 > var size = numberFormatter({signs: 2, binary: true, units: 'B kB MB GB TB'.split(' ')})
 > size(1024000)
-"1 MB"
-> size(1024000)
 "1 MB"
 > size(10240000)
 "9.8 MB"
