@@ -22,6 +22,8 @@ var numberFormatter = (function() {
 				value /= divider;
 			}
 
+			value += 0.000000000000001;
+
 			// number of digits after point: total number minus digits before point
 			var fixedTo = Math.max(0, self.signs - Math.floor(value).toFixed(0).length);
 			// fixed → number → string, to trim trailing zeroes
