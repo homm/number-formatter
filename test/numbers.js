@@ -24,6 +24,70 @@ test("Positive number", function() {
 
 
 
+module("Parameters");
+
+test("Constructor defaults", function() {
+	var size = numberFormatter;
+
+	equal(size.signs, 3);
+	equal(size.binary, false);
+	deepEqual(size.units, ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']);
+	equal(size.spacer, ' ');
+	equal(size.nan, '');
+});
+
+test("Instance defaults", function() {
+	var size = numberFormatter();
+
+	equal(size.signs, 3);
+	equal(size.binary, false);
+	deepEqual(size.units, ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']);
+	equal(size.spacer, ' ');
+	equal(size.nan, '');
+});
+
+test("From constructor", function() {
+	var size = numberFormatter();
+	numberFormatter.signs = 6;
+	numberFormatter.spacer = '-';
+	equal(size.signs, 3);
+	equal(size.spacer, ' ');
+
+	var size = numberFormatter();
+	numberFormatter.signs = 3;
+	numberFormatter.spacer = ' ';
+	equal(size.signs, 6);
+	equal(size.spacer, '-');
+});
+
+test("From instance", function() {
+	var size = numberFormatter({
+		signs: 8,
+		units: 'B kB MB GB'.split(' '),
+		binary: true,
+		spacer: '-',
+		nan: NaN
+	});
+
+	deepEqual(size("test"), NaN);
+	equal(size(555555555555), "517.40143-GB");
+});
+
+test("Change after instantiating", function() {
+	var size = numberFormatter();
+
+	size.signs = 8;
+	size.units = 'B kB MB GB'.split(' ');
+	size.binary = true;
+	size.spacer = '-';
+	size.nan = NaN;
+
+	deepEqual(size("test"), NaN);
+	equal(size(555555555555), "517.40143-GB");
+});
+
+
+
 module("Preformance");
 
 test("Create formatter", function() {
